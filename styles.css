@@ -75,7 +75,8 @@ a {
 .categoryScrollbar section {
   width: 100%;
   position: relative;
-  display: grid;
+  display: flex;
+  justify-content: space-between;
   grid-template-columns: repeat(5, auto);
   margin: 20px 0;
 }
@@ -90,49 +91,38 @@ a {
   transform: scale(1.2);
 }
 
-.categoryScrollbar section a {
+.categoryScrollbar section .arrowButton {
   position: absolute;
   color: #fff;
   text-decoration: none;
   font-size: 2em;
-  width: 80px;
-  padding: 20px;
   text-align: center;
   z-index: 1;
-}
-
-.categoryScrollbar section a:nth-of-type(1) {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  background: linear-gradient(-90deg, rgba(0, 0, 0, 0) 0%, black 100%);
-}
-
-.categoryScrollbar section a:nth-of-type(2) {
-  top: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, black 100%);
+  top: 65px;
 }
 
 .movieImages {
-  width: 200px;
-  height: 150px;
+  width: 240px;
+  height: 180px;
 }
 
 .arrowButton {
+  top: 0px;
   background-color: transparent;
   border-right: 10px solid white;
   border-bottom: 10px solid white;
   padding: 3px;
   width: 20px;
   height: 20px;
+  border-radius: 5px;
 }
 
 .leftArrow {
   transform: rotate(135deg);
+  left: 20px;
 }
 
 .rightArrow {
   transform: rotate(-45deg);
+  right: 30px;
 }
