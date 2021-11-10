@@ -16,6 +16,7 @@ function createImageSlider(title, listOfImages) {
     section.id = `section${count}${title}`;
 
     let arrowLeft = document.createElement("a");
+    arrowLeft.textContent = "‹";
     arrowLeft.href = `#section${lastSectionNumber(
       count,
       numberOfSections
@@ -33,6 +34,7 @@ function createImageSlider(title, listOfImages) {
     }
 
     let arrowRight = document.createElement("a");
+    arrowRight.textContent = "›";
     arrowRight.href = `#section${nextSectionNumber(
       count,
       numberOfSections

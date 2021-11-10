@@ -93,39 +93,47 @@ a {
 
 .categoryScrollbar section .arrowButton {
   position: absolute;
-  color: #fff;
   text-decoration: none;
-  font-size: 2em;
+  font-size: 10em;
+  width: 60px;
+  height: 220px;
   text-align: center;
   z-index: 1;
-  top: 70px;
+}
+
+.categoryScrollbar section .arrowButton:hover {
+  transform: scale(1.4);
+  color: rgba(255, 255, 255, 1);
 }
 
 .movieImages {
-  width: 220px;
-  height: 200px;
+  width: 260px;
+  height: 220px;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
 }
 
-.arrowButton {
-  top: 0px;
-  background-color: transparent;
-  border-right: 10px solid white;
-  border-bottom: 10px solid white;
-  padding: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
+.rightArrow {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .leftArrow {
-  transform: rotate(135deg);
-  left: 20px;
-}
-
-.rightArrow {
-  transform: rotate(-45deg);
-  right: 30px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    -90deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  color: rgba(255, 255, 255, 0.5);
 }
