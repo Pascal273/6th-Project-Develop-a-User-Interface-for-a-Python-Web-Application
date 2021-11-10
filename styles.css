@@ -98,12 +98,15 @@ a {
   font-size: 2em;
   text-align: center;
   z-index: 1;
-  top: 65px;
+  top: 70px;
 }
 
 .movieImages {
-  width: 240px;
-  height: 180px;
+  width: 220px;
+  height: 200px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .arrowButton {
