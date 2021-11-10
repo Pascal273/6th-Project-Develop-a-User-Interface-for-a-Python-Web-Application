@@ -91,6 +91,14 @@ a {
   transform: scale(1.2);
 }
 
+.movieImages {
+  width: 260px;
+  height: 220px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 .categoryScrollbar section .arrowButton {
   position: absolute;
   text-decoration: none;
@@ -104,14 +112,6 @@ a {
 .categoryScrollbar section .arrowButton:hover {
   transform: scale(1.4);
   color: rgba(255, 255, 255, 1);
-}
-
-.movieImages {
-  width: 260px;
-  height: 220px;
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
 }
 
 .rightArrow {
