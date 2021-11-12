@@ -70,20 +70,29 @@ a {
   grid-template-columns: repeat(3, 100%);
   overflow: hidden;
   scroll-behavior: smooth;
+  grid-auto-flow: column;
 }
 
 .categoryScrollbar section {
   width: 100%;
   position: relative;
   display: flex;
-  justify-content: space-between;
   grid-template-columns: repeat(5, auto);
   margin: 20px 0;
 }
 
 .categoryScrollbar section .movieImages {
-  padding: 0 2px;
+  position: relative;
+  padding: 5px;
   transition: 250ms all;
+  width: 240px;
+  height: 200px;
+}
+
+.categoryScrollbar section .movieImages img {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .categoryScrollbar section .movieImages:hover {
@@ -91,12 +100,18 @@ a {
   transform: scale(1.2);
 }
 
-.movieImages {
-  width: 260px;
-  height: 220px;
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
+.heading {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: #fff;
+}
+
+.duration {
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  color: #fff;
 }
 
 .categoryScrollbar section .arrowButton {

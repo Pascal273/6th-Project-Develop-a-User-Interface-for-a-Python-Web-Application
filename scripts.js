@@ -1,6 +1,20 @@
+const imgPerSection = 4;
+
+let winX = null;
+let winY = null;
+
+// prevents the window from scrolling to the Position of the link-tag.
+window.addEventListener("scroll", function () {
+  if (winX !== null && winY !== null) {
+    window.scrollTo(winX, winY);
+    winX = null;
+    winY = null;
+  }
+});
+
 function createImageSlider(title, listOfImages) {
-  let numberOfSections = Math.ceil(listOfImages.length / 4);
-  let listOfImageChunks = sliceIntoChunks(listOfImages, 4);
+  let numberOfSections = Math.ceil(listOfImages.length / imgPerSection);
+  let listOfImageChunks = sliceIntoChunks(listOfImages, imgPerSection);
 
   let newHeader = document.createElement("h1");
   newHeader.className = "sectionHeader";
@@ -15,8 +29,20 @@ function createImageSlider(title, listOfImages) {
     let section = window["section" + count];
     section.id = `section${count}${title}`;
 
+    // if a section is incomplete the thumbnails will be aligned left to right
+    // else they will have an even space in between
+    if (chunk.length < imgPerSection) {
+      section.style.justifyContent = "flex-start";
+    } else {
+      section.style.justifyContent = "space-between";
+    }
+
     let arrowLeft = document.createElement("a");
     arrowLeft.textContent = "‹";
+    arrowLeft.onmousedown = function disableWindowScroll() {
+      winX = window.scrollX;
+      winY = window.scrollY;
+    };
     arrowLeft.href = `#section${lastSectionNumber(
       count,
       numberOfSections
@@ -26,15 +52,39 @@ function createImageSlider(title, listOfImages) {
     section.appendChild(arrowLeft);
 
     for (const thumb of chunk) {
-      let img = document.createElement("div");
-      img.classList.add("movieImages");
-      img.style.backgroundImage = `url(${thumb})`;
+      let thumbnail = document.createElement("div");
+      thumbnail.classList.add("movieImages");
 
-      section.appendChild(img);
+      let link = document.createElement("a");
+      link.href = "#";
+
+      let img = document.createElement("img");
+      img.src = thumb;
+
+      let heading = document.createElement("h1");
+      heading.textContent = "Movie Title";
+      heading.className = "heading";
+
+      let duration = document.createElement("p");
+      duration.textContent = "Duration: 60 min";
+      duration.className = "duration";
+
+      link.appendChild(img);
+      link.appendChild(heading);
+      link.appendChild(duration);
+
+      thumbnail.appendChild(link);
+
+      section.appendChild(thumbnail);
     }
 
     let arrowRight = document.createElement("a");
     arrowRight.textContent = "›";
+    arrowRight.onmousedown = function disableWindowScroll() {
+      winX = window.scrollX;
+      winY = window.scrollY;
+    };
+
     arrowRight.href = `#section${nextSectionNumber(
       count,
       numberOfSections
@@ -84,3 +134,5 @@ let topRated = createImageSlider("Top Rated Movies", imgList);
 let category1 = createImageSlider("Action", imgList);
 let category2 = createImageSlider("Crime", imgList);
 let category3 = createImageSlider("Comedy", imgList);
+
+const link = document.getElementsByTagName("a");
