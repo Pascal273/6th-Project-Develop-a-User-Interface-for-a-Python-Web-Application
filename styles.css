@@ -27,6 +27,11 @@ a {
   justify-content: space-between;
 }
 
+#logo {
+  filter: invert();
+  height: 100px;
+}
+
 .navbarLinks {
   width: 200px;
 }
@@ -61,8 +66,31 @@ a {
 }
 
 .sectionHeader {
-  text-align: center;
+  text-align: left;
   margin-top: 60px;
+  margin-left: 30px;
+  margin-bottom: -8px;
+}
+
+.sectionIndicator {
+  position: relative;
+  display: flex;
+  margin-top: 60px;
+  margin-right: 10px;
+  margin-bottom: -20px;
+}
+
+.sectionIndicator li {
+  display: inline-block;
+  width: 20px;
+  background-color: #4d4d4d;
+  margin-left: 2px;
+  border-radius: 4px;
+  padding-top: 10px;
+}
+
+.sectionIndicator .active {
+  background-color: #aaa;
 }
 
 .categoryScrollbar {
