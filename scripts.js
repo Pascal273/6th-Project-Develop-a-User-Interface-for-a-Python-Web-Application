@@ -1,9 +1,17 @@
+// ---------------------------------------------------------------------
+//                      Setup Imagesliders
+// ---------------------------------------------------------------------
+
+const imgList = Array(12).fill(
+  "https://images.unsplash.com/photo-1626191587911-45c8729b8d99?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=870&q=80"
+);
+
 const imgPerSection = 4;
 
+// prevents the window from scrolling to the Position of the link-tag.
 let winX = null;
 let winY = null;
 
-// prevents the window from scrolling to the Position of the link-tag.
 window.addEventListener("scroll", function () {
   if (winX !== null && winY !== null) {
     window.scrollTo(winX, winY);
@@ -166,15 +174,6 @@ function lastSectionNumber(sectionNumber, numberOfSections) {
   }
 }
 
-function sliceIntoChunks(arr, chunkSize) {
-  const res = [];
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    const chunk = arr.slice(i, i + chunkSize);
-    res.push(chunk);
-  }
-  return res;
-}
-
 function highlightNextSectionIndicator(nodeListElements) {
   let listElements = Array.from(nodeListElements);
   listElements.unshift(listElements.pop());
@@ -189,13 +188,56 @@ function highlightLastSectionIndicator(nodeListElements) {
   return listElements;
 }
 
-const imgList = Array(12).fill(
-  "https://images.unsplash.com/photo-1626191587911-45c8729b8d99?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=870&q=80"
+//--------------------- Helper functions ------------------------------
+
+function sliceIntoChunks(arr, chunkSize) {
+  const res = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize);
+    res.push(chunk);
+  }
+  return res;
+}
+
+// ---------------------------------------------------------------------
+//                      Get Data from the Api
+// ---------------------------------------------------------------------
+
+const baseUrl = "http://localhost:8000/api/v1/";
+
+async function fetchData(endpoint) {
+  data = await fetch(baseUrl + endpoint)
+    .then((response) => response.json())
+    .catch((error) => console.log("An error has occurred!", error));
+  return data;
+}
+
+// --------------- Create "Top Rated Movies - Section" -----------------
+
+const topRatedMovies = [];
+
+fetchData("titles?imdb_score_min=9").then((data) =>
+  setupTopRated(data.results)
 );
 
-let topRated = createImageSlider("Top Rated Movies", imgList);
-let category1 = createImageSlider("Action", imgList);
-let category2 = createImageSlider("Crime", imgList);
-let category3 = createImageSlider("Comedy", imgList);
+function setupTopRated(topRatedData) {
+  for (const item of topRatedData) {
+    console.log(item);
+  }
+}
 
-const link = document.getElementsByTagName("a");
+createImageSlider("Top Rated Movies", imgList);
+
+// ------------------- Create Categories sections ----------------------
+
+let categoryList = [];
+fetchData("genres").then((data) => setupCategories(data.results));
+
+function setupCategories(arrayOfCategories) {
+  for (const item of arrayOfCategories) {
+    categoryList.push(item.name);
+  }
+  for (const category of categoryList) {
+    createImageSlider(category, imgList);
+  }
+}
