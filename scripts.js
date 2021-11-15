@@ -213,7 +213,6 @@ async function fetchData(endpoint) {
 }
 
 // --------------- Create "Top Rated Movies - Section" -----------------
-
 const topRatedMovies = [];
 
 fetchData("titles?imdb_score_min=9").then((data) =>
@@ -222,18 +221,19 @@ fetchData("titles?imdb_score_min=9").then((data) =>
 
 function setupTopRated(topRatedData) {
   for (const item of topRatedData) {
-    console.log(item);
+    topRatedMovies.push(item);
   }
+  console.log(topRatedMovies);
 }
 
 createImageSlider("Top Rated Movies", imgList);
 
 // ------------------- Create Categories sections ----------------------
 
-let categoryList = [];
 fetchData("genres").then((data) => setupCategories(data.results));
 
 function setupCategories(arrayOfCategories) {
+  let categoryList = [];
   for (const item of arrayOfCategories) {
     categoryList.push(item.name);
   }
