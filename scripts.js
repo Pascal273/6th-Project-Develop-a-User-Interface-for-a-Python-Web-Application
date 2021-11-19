@@ -350,3 +350,10 @@ class CategorySlider {
 
 fetchResultPages();
 fetchAllCategories();
+
+// add new category slider if user reached end of page
+window.onscroll = function () {
+  if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
+    new CategorySlider();
+  }
+};
