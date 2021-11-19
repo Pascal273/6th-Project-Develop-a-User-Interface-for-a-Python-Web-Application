@@ -242,7 +242,9 @@ async function fetchData(endpoint) {
   return data;
 }
 
-// ------ Create "Top Rated Movies - Section and Top-Movie-Head" ------
+// ---------------------------------------------------------------------
+//         Create "Top Rated Movies - Section and Top-Movie-Head"
+// ---------------------------------------------------------------------
 let topMovieObjectsList = [];
 
 // find all pages of the filter-endpoint
@@ -280,9 +282,7 @@ function setupTopRatedSlider(movieObjectList) {
   createImageSlider("Top Rated Movies", movieObjectList);
 }
 
-fetchResultPages();
-
-// ------------------- Fecth all categories ----------------------
+// ------------------- Fetch all categories ----------------------
 let categoryNames = [];
 
 let endPoint = "genres/";
@@ -306,7 +306,9 @@ function fetchCategoryNames(categoryPage) {
   });
 }
 
-// --------------- Fetch all titles from a Category ---------------
+// ---------------------------------------------------------------------
+//         Creator for a new slider for the next available Category
+// ---------------------------------------------------------------------
 
 class CategorySlider {
   constructor() {
@@ -331,7 +333,7 @@ class CategorySlider {
           0,
           maxSliderResults
         );
-        createCategorySlider(this.categoryName, this.allCategoryMovieObjects);
+        createImageSlider(this.categoryName, this.allCategoryMovieObjects);
         this.allCategoryMovieObjects = [];
       }
     });
@@ -346,11 +348,5 @@ class CategorySlider {
   }
 }
 
-// ---------------- Creator for a new Category Section ---------------
-
-function createCategorySlider(categoryName, listOfMovies) {
-  createImageSlider(categoryName, listOfMovies);
-  // console.log(categoryName, listOfMovies);
-}
-
+fetchResultPages();
 fetchAllCategories();
