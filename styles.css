@@ -8,7 +8,8 @@ body {
 p,
 a,
 span,
-div {
+div,
+button {
   color: white;
 }
 
@@ -41,8 +42,20 @@ a {
   text-align: center;
   border-radius: 30px;
   background-color: brown;
+  border: 0;
+  padding: 3px 30px;
+  box-shadow: 0px 2px 10px rgba(255, 255, 255, 0.4);
+  color: gainsboro;
   width: 100px;
   padding: 4px 0px;
+  font-family: fantasy;
+  letter-spacing: 2px;
+}
+
+#playButton:hover {
+  transform: scale(1.2);
+  box-shadow: 7px 7px 10px rgba(255, 255, 255, 0.4);
+  transition: 500ms all;
 }
 
 .currentMovieBox {
@@ -161,4 +174,42 @@ a {
     rgba(0, 0, 0, 1) 70%
   );
   color: rgba(255, 255, 255, 0.5);
+}
+
+.modal-container {
+  display: flex;
+  /* display: none; */
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 1;
+}
+
+.modal {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.modal button {
+  background-color: brown;
+  border-radius: 5px;
+  border: 0;
+  padding: 3px 30px;
+  box-shadow: 0px 2px 10px rgba(255, 255, 255, 0.4);
+  color: #aaa;
+  font-size: 18px;
+  /* font-weight: bold; */
+  font-family: fantasy;
+  letter-spacing: 1.5px;
+}
+
+.modal button:hover {
+  transform: scale(1.2);
+  box-shadow: 7px 7px 10px rgba(255, 255, 255, 0.4);
+  transition: 500ms all;
 }

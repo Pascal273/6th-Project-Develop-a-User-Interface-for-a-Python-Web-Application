@@ -1,6 +1,6 @@
-const maxSliderResults = 15;
-const maxResultPages = 3;
-const imgPerSection = 5;
+const maxSliderResults = 21;
+const maxResultPages = 4;
+const imgPerSection = 7;
 
 // ---------------------------------------------------------------------
 //                      Setup Top Movie Head
@@ -45,7 +45,7 @@ function disableWindowScroll() {
   winY = window.scrollY;
 }
 
-// creator for a new imageslider
+// ------------------ creator for a new imageslider -------------------
 function createImageSlider(title, movieObjectList) {
   /**
    * Takes two Arguments, Creates a new Imageslider,
@@ -269,8 +269,8 @@ function fetchResultPages() {
 }
 
 // add the movie object to the list
-function fetchMovieDetails(movieEndPoint) {
-  fetchData(movieEndPoint).then((data) => {
+function fetchMovieDetails(EndPoint) {
+  fetchData(EndPoint).then((data) => {
     for (const movie of data.results) {
       topMovieObjectsList.push(movie);
     }
@@ -357,3 +357,7 @@ window.onscroll = function () {
     new CategorySlider();
   }
 };
+
+// ---------------------------------------------------------------------
+//                        Setup Modal Window
+// ---------------------------------------------------------------------
