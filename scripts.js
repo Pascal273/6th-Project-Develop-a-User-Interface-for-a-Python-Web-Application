@@ -1,15 +1,15 @@
-const minRatingForTopRatedSection = 9.2;
-const minRatingForCategories = 8;
 const maxSliderResults = 15;
 const maxResultPages = 3;
 const imgPerSection = 5;
-const categoriesPerLoad = 3;
 
 // ---------------------------------------------------------------------
 //                      Setup Top Movie Head
 // ---------------------------------------------------------------------
 
 function createTopMovieHead(movieObject) {
+  /**
+   * Creates the Head Section for the Top Rated Movie.
+   */
   let imageContainer = document.getElementById("bgImage");
   imageContainer.style.backgroundImage = `url(${movieObject.image_url})`;
 
@@ -28,7 +28,7 @@ const imgList = Array(12).fill(
   "https://images.unsplash.com/photo-1626191587911-45c8729b8d99?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=870&q=80"
 );
 
-// prevents the window from scrolling to the Position of the link-tag.
+// preventing the window from scrolling to the Position of the link-tag.
 let winX = null;
 let winY = null;
 
@@ -45,11 +45,23 @@ function disableWindowScroll() {
   winY = window.scrollY;
 }
 
+// creator for a new imageslider
 function createImageSlider(title, movieObjectList) {
+  /**
+   * Takes two Arguments, Creates a new Imageslider,
+   * and appends it at the end of the <div> with the id: sliderArea.
+   *
+   * Args:
+   *  title: String
+   *  movieObjectlist: array - array of movie-objects in json format.
+   */
   const titleNoSpaces = title.replaceAll(" ", "_");
 
   let numberOfSections = Math.ceil(movieObjectList.length / imgPerSection);
   let listOfImageChunks = sliceIntoChunks(movieObjectList, imgPerSection);
+
+  let newSlider = document.createElement("div");
+  newSlider.id = "imageSlider";
 
   let newHeader = document.createElement("h2");
   newHeader.className = "sectionHeader";
@@ -165,9 +177,9 @@ function createImageSlider(title, movieObjectList) {
     divScrollbar.appendChild(section);
     sectionNumber += 1;
   }
-
-  document.getElementById("imageSlider").appendChild(sliderHeadline);
-  document.getElementById("imageSlider").appendChild(divScrollbar);
+  newSlider.appendChild(sliderHeadline);
+  newSlider.appendChild(divScrollbar);
+  document.getElementById("sliderArea").appendChild(newSlider);
 }
 
 function nextSectionNumber(sectionNumber, numberOfSections) {
@@ -218,6 +230,12 @@ function sliceIntoChunks(arr, chunkSize) {
 const baseUrl = "http://localhost:8000/api/v1/";
 
 async function fetchData(endpoint) {
+  /**
+   * Takes an endpoint as an argurment, and returns the response data
+   * in a json format.
+   *
+   * If an error occures, it will be loged in the Console.
+   */
   data = await fetch(baseUrl + endpoint)
     .then((response) => response.json())
     .catch((error) => console.log("An error has occurred!", error));
@@ -226,13 +244,12 @@ async function fetchData(endpoint) {
 
 // ------ Create "Top Rated Movies - Section and Top-Movie-Head" ------
 let topMovieObjectsList = [];
-let pagesChecked = 0;
 
 // find all pages of the filter-endpoint
 
-// let next = `titles?imdb_score_min=${minRatingForTopRatedSection}`;
 let next = `titles?sort_by=-imdb_score`;
 
+let pagesChecked = 0;
 function fetchResultPages() {
   fetchMovieDetails(next);
   fetchData(next).then((data) => {
@@ -276,7 +293,7 @@ function fetchAllCategories() {
       endPoint = data.next.split("v1/")[1];
       fetchAllCategories();
     } else {
-      nextCategory();
+      new CategorySlider();
     }
   });
 }
@@ -291,41 +308,42 @@ function fetchCategoryNames(categoryPage) {
 
 // --------------- Fetch all titles from a Category ---------------
 
-let allCategoryMovieObjects = [];
-let categoryName = "";
-let currentEndPoint = "";
+class CategorySlider {
+  constructor() {
+    this.allCategoryMovieObjects = [];
+    this.categoryName = "";
+    this.currentEndPoint = "";
+    this.pagesChecked = 0;
+    this.categoryName = categoryNames.shift();
+    this.currentEndPoint = `titles?genre=${this.categoryName}&sort_by=-imdb_score`;
+    this.fetchNextCategory();
+  }
 
-function nextCategory() {
-  categoryName = categoryNames.shift();
-  currentEndPoint = `titles?genre=${categoryName}&sort_by=-imdb_score`;
-  fetchNextCategory();
-}
+  fetchNextCategory() {
+    this.fetchMovieObjects(this.currentEndPoint);
+    fetchData(this.currentEndPoint).then((data) => {
+      if (data.next && this.pagesChecked <= maxResultPages) {
+        this.currentEndPoint = data.next.split("v1/")[1];
+        this.fetchNextCategory();
+        this.pagesChecked += 1;
+      } else {
+        this.allCategoryMovieObjects = this.allCategoryMovieObjects.splice(
+          0,
+          maxSliderResults
+        );
+        createCategorySlider(this.categoryName, this.allCategoryMovieObjects);
+        this.allCategoryMovieObjects = [];
+      }
+    });
+  }
 
-function fetchNextCategory() {
-  fetchMovieObjects(currentEndPoint);
-  fetchData(currentEndPoint).then((data) => {
-    if (data.next && pagesChecked <= maxResultPages) {
-      currentEndPoint = data.next.split("v1/")[1];
-      fetchNextCategory();
-      pagesChecked += 1;
-    } else {
-      allCategoryMovieObjects = allCategoryMovieObjects.splice(
-        0,
-        maxSliderResults
-      );
-      createCategorySlider(categoryName, allCategoryMovieObjects);
-      allCategoryMovieObjects = [];
-      pagesChecked = 0;
-    }
-  });
-}
-
-function fetchMovieObjects(currentCategoryPage) {
-  fetchData(currentCategoryPage).then((data) => {
-    for (const result of data.results) {
-      allCategoryMovieObjects.push(result);
-    }
-  });
+  fetchMovieObjects(currentCategoryPage) {
+    fetchData(currentCategoryPage).then((data) => {
+      for (const result of data.results) {
+        this.allCategoryMovieObjects.push(result);
+      }
+    });
+  }
 }
 
 // ---------------- Creator for a new Category Section ---------------
