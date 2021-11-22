@@ -419,6 +419,16 @@ function setupModalContent(movieId) {
   });
 }
 
+// Modal window also closes by click outside of it
+let outsideModal = document.getElementById("modalWindow");
+let modalArea = document.querySelector(".modal");
+outsideModal.addEventListener("click", (event) => {
+  let isClickInside = modalArea.contains(event.target);
+  if (!isClickInside) {
+    closeModal();
+  }
+});
+
 function closeModal() {
   /**
    * Hides the modal window and clears it's content.
