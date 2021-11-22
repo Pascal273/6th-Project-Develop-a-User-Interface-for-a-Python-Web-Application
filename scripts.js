@@ -1,6 +1,8 @@
-const maxSliderResults = 21;
-const maxResultPages = 4;
-const imgPerSection = 7;
+const maxSliderResults = 21; // max number of movies per slider
+const imgPerSection = 7; // number of images per slider section
+const maxResultPages = 4; // max fetch-result pages
+const categoryOrder = "r"; // (a)lphabetic / (r)andom
+const catPerLoad = 3; // number of categories at start
 
 // ---------------------------------------------------------------------
 //                      Setup Top Movie Head
@@ -46,7 +48,7 @@ function disableWindowScroll() {
 }
 
 // ------------------ creator for a new imageslider -------------------
-function createImageSlider(title, movieObjectList) {
+function createImageSlider(title, movieObjectList, containerId) {
   /**
    * Takes two Arguments, Creates a new Imageslider,
    * and appends it at the end of the <div> with the id: sliderArea.
@@ -58,10 +60,7 @@ function createImageSlider(title, movieObjectList) {
   const titleNoSpaces = title.replaceAll(" ", "_");
 
   let numberOfSections = Math.ceil(movieObjectList.length / imgPerSection);
-  let listOfImageChunks = sliceIntoChunks(movieObjectList, imgPerSection);
-
-  let newSlider = document.createElement("div");
-  newSlider.id = "imageSlider";
+  let movieListChunks = sliceIntoChunks(movieObjectList, imgPerSection);
 
   let newHeader = document.createElement("h2");
   newHeader.className = "sectionHeader";
@@ -95,7 +94,7 @@ function createImageSlider(title, movieObjectList) {
   });
 
   let sectionNumber = 1;
-  for (const chunk of listOfImageChunks) {
+  for (const chunk of movieListChunks) {
     window["section" + sectionNumber] = document.createElement("section");
     let section = window["section" + sectionNumber];
     section.id = `section${sectionNumber}${title}`;
@@ -138,7 +137,8 @@ function createImageSlider(title, movieObjectList) {
       thumbnail.classList.add("movieImages");
 
       let link = document.createElement("a");
-      link.href = movieObject.imdb_url;
+      link.href = "#/";
+      link.addEventListener("click", () => displayModal(movieObject.id));
 
       let img = document.createElement("img");
       img.src = movieObject.image_url;
@@ -177,9 +177,11 @@ function createImageSlider(title, movieObjectList) {
     divScrollbar.appendChild(section);
     sectionNumber += 1;
   }
+  let newSlider = document.getElementById(containerId);
+
   newSlider.appendChild(sliderHeadline);
   newSlider.appendChild(divScrollbar);
-  document.getElementById("sliderArea").appendChild(newSlider);
+  // document.getElementById(containerId).appendChild(newSlider);
 }
 
 function nextSectionNumber(sectionNumber, numberOfSections) {
@@ -212,17 +214,6 @@ function highlightLastSectionIndicator(nodeListElements) {
   return listElements;
 }
 
-//--------------------- Helper functions ------------------------------
-
-function sliceIntoChunks(arr, chunkSize) {
-  const res = [];
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    const chunk = arr.slice(i, i + chunkSize);
-    res.push(chunk);
-  }
-  return res;
-}
-
 // ---------------------------------------------------------------------
 //                      Get Data from the Api
 // ---------------------------------------------------------------------
@@ -243,57 +234,26 @@ async function fetchData(endpoint) {
 }
 
 // ---------------------------------------------------------------------
-//         Create "Top Rated Movies - Section and Top-Movie-Head"
+//                     Fetch all categories
 // ---------------------------------------------------------------------
-let topMovieObjectsList = [];
 
-// find all pages of the filter-endpoint
-
-let next = `titles?sort_by=-imdb_score`;
-
-let pagesChecked = 0;
-function fetchResultPages() {
-  fetchMovieDetails(next);
-  fetchData(next).then((data) => {
-    if (data.next && pagesChecked <= maxResultPages) {
-      next = data.next.split("v1/")[1];
-      fetchResultPages();
-      pagesChecked += 1;
-    } else {
-      topMovieObjectsList = topMovieObjectsList.splice(0, maxSliderResults);
-      createTopMovieHead(topMovieObjectsList[0]);
-      setupTopRatedSlider(topMovieObjectsList);
-      pagesChecked = 0;
-    }
-  });
-}
-
-// add the movie object to the list
-function fetchMovieDetails(EndPoint) {
-  fetchData(EndPoint).then((data) => {
-    for (const movie of data.results) {
-      topMovieObjectsList.push(movie);
-    }
-  });
-}
-
-// creat the slider with all Top rated movies
-function setupTopRatedSlider(movieObjectList) {
-  createImageSlider("Top Rated Movies", movieObjectList);
-}
-
-// ------------------- Fetch all categories ----------------------
-let categoryNames = [];
+let categoryNames = ["Top Rated Movies"];
 
 let endPoint = "genres/";
 function fetchAllCategories() {
   fetchCategoryNames(endPoint);
   fetchData(endPoint).then((data) => {
-    if (data.next != null) {
+    if (data.next) {
       endPoint = data.next.split("v1/")[1];
       fetchAllCategories();
     } else {
-      new CategorySlider();
+      createNextSlider();
+      if (categoryOrder == "r") {
+        categoryNames.sort((a, b) => 0.5 - Math.random());
+      }
+      for (let i = 0; i < catPerLoad; i++) {
+        createNextSlider();
+      }
     }
   });
 }
@@ -307,57 +267,185 @@ function fetchCategoryNames(categoryPage) {
 }
 
 // ---------------------------------------------------------------------
-//         Creator for a new slider for the next available Category
+//        Creator Top Rated Movies and the next available Category
 // ---------------------------------------------------------------------
 
 class CategorySlider {
-  constructor() {
-    this.allCategoryMovieObjects = [];
-    this.categoryName = "";
-    this.currentEndPoint = "";
+  constructor(categoryName, id) {
+    this.movieObjects = [];
     this.pagesChecked = 0;
-    this.categoryName = categoryNames.shift();
-    this.currentEndPoint = `titles?genre=${this.categoryName}&sort_by=-imdb_score`;
-    this.fetchNextCategory();
+    this.categoryName = categoryName;
+    this.id = id;
+    if (this.categoryName == "Top Rated Movies") {
+      this.endPoint = `titles?sort_by=-imdb_score`;
+    } else {
+      this.endPoint = `titles?genre=${this.categoryName}&sort_by=-imdb_score`;
+    }
+    this.fetchCategory();
   }
 
-  fetchNextCategory() {
-    this.fetchMovieObjects(this.currentEndPoint);
-    fetchData(this.currentEndPoint).then((data) => {
+  fetchCategory() {
+    this.fetchMovieObjects(this.endPoint);
+    fetchData(this.endPoint).then((data) => {
       if (data.next && this.pagesChecked <= maxResultPages) {
-        this.currentEndPoint = data.next.split("v1/")[1];
-        this.fetchNextCategory();
+        this.endPoint = data.next.split("v1/")[1];
+        this.fetchCategory();
         this.pagesChecked += 1;
       } else {
-        this.allCategoryMovieObjects = this.allCategoryMovieObjects.splice(
-          0,
-          maxSliderResults
-        );
-        createImageSlider(this.categoryName, this.allCategoryMovieObjects);
-        this.allCategoryMovieObjects = [];
+        if (this.movieObjects.length >= imgPerSection) {
+          this.movieObjects = this.movieObjects.splice(0, maxSliderResults);
+          createImageSlider(this.categoryName, this.movieObjects, this.id);
+        }
       }
     });
   }
 
   fetchMovieObjects(currentCategoryPage) {
-    fetchData(currentCategoryPage).then((data) => {
-      for (const result of data.results) {
-        this.allCategoryMovieObjects.push(result);
-      }
-    });
+    fetchData(currentCategoryPage)
+      .then((data) => data.results)
+      .then((results) => {
+        if (this.categoryName == "Top Rated Movies" && this.pagesChecked == 0) {
+          createTopMovieHead(results[0]);
+        }
+        for (const result of results) {
+          this.movieObjects.push(result);
+        }
+      });
   }
 }
 
-fetchResultPages();
+idNumber = 0;
+function createNextSlider() {
+  idNumber += 1;
+
+  let newSlider = document.createElement("div");
+  newSlider.className = "imageSlider";
+  const id = `imageSlider_${idNumber}`;
+  newSlider.id = id;
+  document.getElementById("sliderArea").appendChild(newSlider);
+
+  new CategorySlider(categoryNames.shift(), id);
+}
+
 fetchAllCategories();
 
 // add new category slider if user reached end of page
 window.onscroll = function () {
   if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
-    new CategorySlider();
+    for (let i = 0; i < catPerLoad; i++) {
+      if (categoryNames) {
+        createNextSlider();
+      }
+    }
   }
 };
 
 // ---------------------------------------------------------------------
 //                        Setup Modal Window
 // ---------------------------------------------------------------------
+
+// key = gets Displayed at the left side of th detail section.
+// value = key  the respective detail within the Api.
+const detailsToDisplay = {
+  Genres: "genres",
+  "Release date": "date_published",
+  "MPAA rating": "rated",
+  "IMDb score": "imdb_score",
+  Director: "directors",
+  "List of actors": "actors",
+  Duration: "duration",
+  "Country of origin": "countries",
+  "Box Office result": "worldwide_gross_income",
+  "Movie summary": "long_description",
+};
+
+function displayModal(movieId) {
+  /**
+   * Takes a movie-ID and displayes the modal window
+   * with detailed information to the movie.
+   */
+  setupModalContent(movieId);
+  let modalWindow = document.getElementById("modalWindow");
+  modalWindow.style.visibility = "visible";
+}
+
+function setupModalContent(movieId) {
+  /**
+   * Takes a movie-ID and creates the content inside the modal window.
+   */
+  const endPoint = `titles/${movieId}`;
+  fetchData(endPoint).then((data) => {
+    let modalImage = document.createElement("img");
+    modalImage.src = data.image_url;
+
+    let modalTitle = document.createElement("h1");
+    modalTitle.innerText = data.title;
+
+    let modalOriginalTitle = document.createElement("h2");
+    modalOriginalTitle.innerText = `(${data.original_title})`;
+
+    let contentArea = document.querySelector(".modal");
+    contentArea.appendChild(modalImage);
+    contentArea.appendChild(modalTitle);
+    contentArea.appendChild(modalOriginalTitle);
+
+    for (const key in detailsToDisplay) {
+      let container = document.createElement("div");
+      let p1 = document.createElement("p");
+      let p2 = document.createElement("p");
+      let detail = data[detailsToDisplay[key]];
+
+      if (!detail) {
+        detail = "Not available";
+      }
+
+      p1.innerText = `${key}: `;
+
+      if (key == "Duration") {
+        detail = minutesToHHMM(detail);
+      }
+
+      p2.innerText = `${detail}`;
+      container.appendChild(p1);
+      container.appendChild(p2);
+      contentArea.appendChild(container);
+    }
+
+    let closeButton = document.createElement("button");
+    closeButton.id = "closeModal";
+    closeButton.innerText = "X";
+    closeButton.addEventListener("click", () => closeModal());
+    contentArea.appendChild(closeButton);
+  });
+}
+
+function closeModal() {
+  /**
+   * Hides the modal window and clears it's content.
+   */
+  document.getElementById("modalWindow").style.visibility = "hidden";
+  document.querySelector(".modal").innerHTML = "";
+}
+
+// ---------------------------------------------------------------------
+//                      Helper Functions
+// ---------------------------------------------------------------------
+
+function sliceIntoChunks(arr, chunkSize) {
+  const res = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize);
+    res.push(chunk);
+  }
+  return res;
+}
+
+function minutesToHHMM(totalMinutes) {
+  let minutes = totalMinutes % 60;
+  minutes = minutes.toLocaleString("en-US", {
+    minimumIntegerDigits: 2,
+    useGrouping: false,
+  });
+  let hours = (totalMinutes - minutes) / 60;
+  return `${hours}h ${minutes}m`;
+}

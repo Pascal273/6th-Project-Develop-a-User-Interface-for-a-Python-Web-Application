@@ -5,6 +5,10 @@ body {
   margin: 0px;
 }
 
+footer {
+  height: 100px;
+}
+
 p,
 a,
 span,
@@ -136,9 +140,10 @@ a {
   max-height: 100%;
 }
 
-.categoryScrollbar section .movieImages:hover {
-  margin: 0 40px;
+.categoryScrollbar section .movieImages img:hover {
   transform: scale(1.05);
+  box-shadow: 7px 7px 10px rgba(255, 255, 255, 0.4);
+  transition: 500ms all;
 }
 
 .categoryScrollbar section .arrowButton {
@@ -178,8 +183,8 @@ a {
 
 .modal-container {
   display: flex;
-  /* display: none; */
-  background-color: rgba(0, 0, 0, 0.8);
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.7);
   justify-content: center;
   align-items: center;
   position: fixed;
@@ -191,15 +196,53 @@ a {
 }
 
 .modal {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 80%;
+  max-height: 80%;
+  /* background: linear-gradient(45deg, #181818 0%, black 70%); */
+  background-color: #181818;
+  border-radius: 20px;
+  position: relative;
+  padding: 20px;
+}
+
+.modal div {
+  display: flex;
+}
+
+.modal h1 {
+  margin-top: 0;
+}
+
+.modal p {
+  display: inline-block;
+}
+
+.modal p:nth-child(1) {
+  width: 200px;
+}
+
+.modal p:nth-child(2) {
+  width: 70%;
+}
+
+.modal span {
+  left: 20px;
+}
+
+.modal img {
+  position: absolute;
+  right: 80px;
+  top: 50px;
 }
 
 .modal button {
+  position: absolute;
+  right: 15px;
+  top: 15px;
   background-color: brown;
-  border-radius: 5px;
+  border-radius: 10px;
   border: 0;
-  padding: 3px 30px;
+  padding: 3px 10px;
   box-shadow: 0px 2px 10px rgba(255, 255, 255, 0.4);
   color: #aaa;
   font-size: 18px;
@@ -210,6 +253,6 @@ a {
 
 .modal button:hover {
   transform: scale(1.2);
-  box-shadow: 7px 7px 10px rgba(255, 255, 255, 0.4);
+  box-shadow: 3px 3px 5px rgba(255, 255, 255, 0.4);
   transition: 500ms all;
 }
