@@ -20,9 +20,6 @@ function createTopMovieHead(movieId) {
     let movieTitle = document.querySelector(".movieTitleBox h1");
     movieTitle.innerText = movieObject.title;
 
-    let playButton = document.querySelector(".movieTitleBox a");
-    playButton.href = movieObject.imdb_url;
-
     let description = document.querySelector(".movieTitleBox #description");
     description.innerText = movieObject.description;
   });
