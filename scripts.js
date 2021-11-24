@@ -8,18 +8,24 @@ const catPerLoad = 3; // number of categories at start
 //                      Setup Top Movie Head
 // ---------------------------------------------------------------------
 
-function createTopMovieHead(movieObject) {
+function createTopMovieHead(movieId) {
   /**
    * Creates the Head Section for the Top Rated Movie.
    */
-  let imageContainer = document.getElementById("bgImage");
-  imageContainer.style.backgroundImage = `url(${movieObject.image_url})`;
+  movieEndPoint = `titles/${movieId}`;
+  fetchData(movieEndPoint).then((movieObject) => {
+    let imageContainer = document.getElementById("movieImage");
+    imageContainer.src = movieObject.image_url;
 
-  let movieTitle = document.querySelector(".movieTitleBox h2");
-  movieTitle.innerText = movieObject.title;
+    let movieTitle = document.querySelector(".movieTitleBox h1");
+    movieTitle.innerText = movieObject.title;
 
-  let playButton = document.querySelector(".movieTitleBox a");
-  playButton.href = movieObject.imdb_url;
+    let playButton = document.querySelector(".movieTitleBox a");
+    playButton.href = movieObject.imdb_url;
+
+    let description = document.querySelector(".movieTitleBox #description");
+    description.innerText = movieObject.description;
+  });
 }
 
 // ---------------------------------------------------------------------
@@ -305,7 +311,7 @@ class CategorySlider {
       .then((data) => data.results)
       .then((results) => {
         if (this.categoryName == "Top Rated Movies" && this.pagesChecked == 0) {
-          createTopMovieHead(results[0]);
+          createTopMovieHead(results[0].id);
         }
         for (const result of results) {
           this.movieObjects.push(result);
@@ -385,9 +391,7 @@ function setupModalContent(movieId) {
     modalOriginalTitle.innerText = `(${data.original_title})`;
 
     let contentArea = document.querySelector(".modal");
-    contentArea.appendChild(modalImage);
-    contentArea.appendChild(modalTitle);
-    contentArea.appendChild(modalOriginalTitle);
+    contentArea.append(modalImage, modalTitle, modalOriginalTitle);
 
     for (const key in detailsToDisplay) {
       let container = document.createElement("div");
@@ -405,13 +409,23 @@ function setupModalContent(movieId) {
         detail = minutesToHHMM(detail);
       }
 
+      if (key == "Box Office result" && detail != "Not available") {
+        detail = detail.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        if (data.budget_currency) {
+          detail = detail + " " + data.budget_currency;
+        } else {
+          detail = detail + " USD";
+        }
+      }
+
       p2.innerText = `${detail}`;
       container.appendChild(p1);
       container.appendChild(p2);
       contentArea.appendChild(container);
     }
 
-    let closeButton = document.createElement("button");
+    let closeButton = document.createElement("a");
+    closeButton.href = "#/";
     closeButton.id = "closeModal";
     closeButton.innerText = "X";
     closeButton.addEventListener("click", () => closeModal());
