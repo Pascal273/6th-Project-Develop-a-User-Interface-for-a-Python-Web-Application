@@ -155,7 +155,6 @@ a {
   transform: scale(1.05);
   box-shadow: 7px 7px 10px rgba(255, 255, 255, 0.4);
   transition: 500ms all;
-  margin: 0 10px 10px 0;
 }
 
 .categoryScrollbar section .arrowButton {
