@@ -247,6 +247,16 @@ a {
   border-radius: 7px;
 }
 
+.modal #noImageInfo {
+  position: absolute;
+  margin-top: 0;
+  right: 80px;
+  top: 50px;
+  background-color: #4d4d4d;
+  padding: 110px 50px;
+  border-radius: 7px;
+}
+
 #closeModal {
   position: absolute;
   right: 15px;
@@ -268,4 +278,11 @@ a {
   box-shadow: 3px 3px 5px rgba(255, 255, 255, 0.4);
   transition: 500ms all;
   margin: 0 4px 4px 0;
+}
+
+.noImageTitle {
+  display: flex;
+  margin-top: 50px;
+  align-items: center;
+  justify-content: center;
 }

@@ -145,8 +145,17 @@ function createImageSlider(title, movieObjectList, containerId) {
 
       let img = document.createElement("img");
       img.src = movieObject.image_url;
+      img.onload = () => link.appendChild(img);
+      img.onerror = () => {
+        let titleText = document.createElement("h3");
+        titleText.className = "noImageTitle";
+        titleText.innerText = movieObject.title;
+        let infoText = document.createElement("h3");
+        infoText.className = "noImageTitle";
+        infoText.innerText = "No image\navailable";
 
-      link.appendChild(img);
+        link.append(titleText, infoText);
+      };
 
       thumbnail.appendChild(link);
 
@@ -378,8 +387,18 @@ function setupModalContent(movieId) {
    */
   const endPoint = `titles/${movieId}`;
   fetchData(endPoint).then((data) => {
+    let contentArea = document.querySelector(".modal");
+
     let modalImage = document.createElement("img");
     modalImage.src = data.image_url;
+    modalImage.onload = () => contentArea.appendChild(modalImage);
+    modalImage.onerror = () => {
+      let infoText = document.createElement("h3");
+      infoText.id = "noImageInfo";
+      infoText.innerText = "No image\navailable";
+
+      contentArea.appendChild(infoText);
+    };
 
     let modalTitle = document.createElement("h1");
     modalTitle.innerText = data.title;
@@ -387,8 +406,7 @@ function setupModalContent(movieId) {
     let modalOriginalTitle = document.createElement("h2");
     modalOriginalTitle.innerText = `(${data.original_title})`;
 
-    let contentArea = document.querySelector(".modal");
-    contentArea.append(modalImage, modalTitle, modalOriginalTitle);
+    contentArea.append(modalTitle, modalOriginalTitle);
 
     for (const key in detailsToDisplay) {
       let container = document.createElement("div");
