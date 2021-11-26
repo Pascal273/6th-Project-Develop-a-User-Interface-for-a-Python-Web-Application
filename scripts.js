@@ -155,6 +155,8 @@ function createImageSlider(title, movieObjectList, containerId) {
         infoText.innerText = "No image\navailable";
 
         link.append(titleText, infoText);
+
+        link.id = "noThumbnail";
       };
 
       thumbnail.appendChild(link);
