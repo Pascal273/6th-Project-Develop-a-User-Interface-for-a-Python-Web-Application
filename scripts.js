@@ -14,24 +14,29 @@ function createTopMovieHead(movieId) {
    */
   movieEndPoint = `titles/${movieId}`;
   fetchData(movieEndPoint).then((movieObject) => {
-    let imageContainer = document.getElementById("movieImage");
+    let imageContainer = document.createElement("img");
+    imageContainer.id = "movieImage";
     imageContainer.src = movieObject.image_url;
 
-    let movieTitle = document.querySelector(".movieTitleBox h1");
+    let movieTitle = document.createElement("h1");
     movieTitle.innerText = movieObject.title;
 
-    let description = document.querySelector(".movieTitleBox #description");
+    let playButton = document.createElement("a");
+    playButton.href = "#/";
+    playButton.innerHTML = '<p id="playButton">Play</p>';
+
+    let description = document.createElement("p");
+    description.id = "description";
     description.innerText = movieObject.description;
+
+    let topMovieBox = document.querySelector(".movieTitleBox");
+    topMovieBox.append(imageContainer, movieTitle, playButton, description);
   });
 }
 
 // ---------------------------------------------------------------------
 //                      Setup Imagesliders
 // ---------------------------------------------------------------------
-
-const imgList = Array(12).fill(
-  "https://images.unsplash.com/photo-1626191587911-45c8729b8d99?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=870&q=80"
-);
 
 // preventing the window from scrolling to the Position of the link-tag.
 let winX = null;
