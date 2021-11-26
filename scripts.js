@@ -150,7 +150,7 @@ function createImageSlider(title, movieObjectList, containerId) {
         let titleText = document.createElement("h3");
         titleText.className = "noImageTitle";
         titleText.innerText = movieObject.title;
-        let infoText = document.createElement("h3");
+        let infoText = document.createElement("h4");
         infoText.className = "noImageTitle";
         infoText.innerText = "No image\navailable";
 
